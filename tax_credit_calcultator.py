@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-CANADA_CHARITY_TAX_CHART_DATA_PATH = "canada_charity_tax_credit.csv"
+CANADA_CHARITY_TAX_CHART_DATA_PATH = "data/canada_charity_tax_credit.csv"
 CANADA_TAX_CHART_DATA_PATH = "canada_tax.csv"
 
 
