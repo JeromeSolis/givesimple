@@ -43,5 +43,5 @@ if __name__ == "__main__":
     (federal_credit, provincial_credit) = tax_credit_calculator(donation_amount, yearly_income, 'QC')
     total_credit = federal_credit + provincial_credit
     donation_ratio = donation_ratio(yearly_income, donation_amount)
-    print('Your donations represent ', donation_ratio*100, '% of your income')
-    print('Your total charitable donation tax credit for this year is ', total_credit,' which represent ', total_credit/donation_amount*100, 'of your total donations')
+    print('Your donations represent ', '{:0.2f}'.format(donation_ratio*100), '% of your income')
+    print('Your total charitable donation tax credit for this year is $', total_credit,' which represent ', '{:0.2f}'.format(total_credit/donation_amount*100), '% of your total donations')
