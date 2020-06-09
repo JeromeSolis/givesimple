@@ -26,30 +26,38 @@ def tax_credit_calculator(donation_amount, yearly_income, province):
     provincial_credit = 0
     tax_chart = load_file()
     province_code = tax_chart.loc[tax_chart['region'] == province]
-    if (yearly_income > constants.HighIncomeLimit and
-       donation_amount > constants.FirstDonationLimit):
-        federal_credit = (constants.FirstDonationLimit *
+    if (yearly_income > constants.HighIncomeLimit.default and
+       donation_amount > constants.FirstDonationLimit.default):
+        federal_credit = (constants.FirstDonationLimit.default *
                           tax_chart['rate_1_2017'].values[0] +
-                          min(yearly_income - constants.HighIncomeLimit,
-                              donation_amount - constants.FirstDonationLimit) *
-                          constants.HighIncomeTaxCredit +
-                          ((donation_amount-constants.FirstDonationLimit) -
-                           min(yearly_income - constants.HighIncomeLimit,
-                               donation_amount - constants.FirstDonationLimit))
+                          min(yearly_income -
+                              constants.HighIncomeLimit.default,
+                              donation_amount -
+                              constants.FirstDonationLimit.default) *
+                          constants.HighIncomeTaxCredit.default +
+                          ((donation_amount -
+                            constants.FirstDonationLimit.default) -
+                           min(yearly_income -
+                               constants.HighIncomeLimit.default,
+                               donation_amount -
+                               constants.FirstDonationLimit.default))
                           * tax_chart['rate_2_2017'].values[0])
-        provincial_credit = (constants.FirstDonationLimit *
+        provincial_credit = (constants.FirstDonationLimit.default *
                              province_code['rate_1_2017'].values[0] +
-                             (donation_amount - constants.FirstDonationLimit) *
+                             (donation_amount -
+                              constants.FirstDonationLimit.default) *
                              province_code['rate_2_2017'].values[0])
-    elif (yearly_income <= constants.HighIncomeLimit and
-          donation_amount > constants.FirstDonationLimit):
-        federal_credit = (constants.FirstDonationLimit *
+    elif (yearly_income <= constants.HighIncomeLimit.default and
+          donation_amount > constants.FirstDonationLimit.default):
+        federal_credit = (constants.FirstDonationLimit.default *
                           tax_chart['rate_1_2017'].values[0] +
-                          (donation_amount - constants.FirstDonationLimit) *
+                          (donation_amount -
+                           constants.FirstDonationLimit.default) *
                           tax_chart['rate_2_2017'].values[0])
-        provincial_credit = (constants.FirstDonationLimit *
+        provincial_credit = (constants.FirstDonationLimit.default *
                              province_code['rate_1_2017'].values[0] +
-                             (donation_amount - constants.FirstDonationLimit) *
+                             (donation_amount -
+                              constants.FirstDonationLimit.default) *
                              province_code['rate_2_2017'].values[0])
     else:
         federal_credit = donation_amount * tax_chart['rate_1_2017'].values[0]
