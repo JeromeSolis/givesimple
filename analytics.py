@@ -4,21 +4,20 @@ from data import constants
 from models import get_tax_credit
 
 
-def donation_to_income_ratio(donation_amount, yearly_income):
+def get_donation_to_income_ratio(donation_amount, yearly_income):
     ratio = donation_amount/yearly_income
     return ratio
 
 
-def credit_to_donation_ratio(tax_credit, donation_amount):
+def get_credit_to_donation_ratio(tax_credit, donation_amount):
     ratio = tax_credit/donation_amount
     return ratio
 
 
-def plot_analytics(yearly_income, province):
-    donation_amount_range = np.linspace(constants.DonationRange.min_amount,
-                                        int(yearly_income *
-                                            constants.DonationRange.
-                                            max_percent_income))
+def plot_donation_to_credit_ratio(yearly_income, province):
+    donation_amount_range = np.linspace(constants.DonationPlotRange.min,
+                                        int(yearly_income * constants.
+                                            GIVING_WHAT_WE_CAN_PLEDGE))
     tax_credit_range = np.zeros(len(donation_amount_range))
     tax_credit_range_percent = tax_credit_range
     iter = 0
