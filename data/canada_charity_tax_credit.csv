@@ -1,4 +1,4 @@
-Region,2017 rates for eligible amount up to $200,2017 rates for eligible amount over $200,2016 rates for eligible amount up to $200,2016 rates for eligible amount over $200
+region,2017 rates <=200,2017 rates >200,2016 rates <=200,2016 rates >200
 CA,0.15,0.29,0.15,0.29
 AB,0.10,0.21,0.10,0.21
 BC,0.05,0.15,0.05,0.15
