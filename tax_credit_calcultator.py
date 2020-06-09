@@ -1,25 +1,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-
-CANADA_CHARITY_TAX_CHART_DATA_PATH = "data/canada_charity_tax_credit.csv"
-CANADA_TAX_CHART_DATA_PATH = "canada_tax.csv"
-
-
-class FirstDonationLevel:
-    value = 200
-
-
-class HighIncomeLevel:
-    value = 200000
-
-
-class HighIncomeTaxCredit:
-    value = 0.33
+from data import constants
 
 
 def load_file():
-    tax_chart = pd.read_csv(CANADA_CHARITY_TAX_CHART_DATA_PATH)
+    tax_chart = pd.read_csv(constants.CANADA_CHARITY_TAX_CREDIT_DATA_PATH)
     tax_chart.columns = ['region', 'rate_1_2017', 'rate_2_2017',
                          'rate_1_2016', 'rate_2_2016']
     return tax_chart
@@ -40,31 +26,36 @@ def tax_credit_calculator(donation_amount, yearly_income, province):
     provincial_credit = 0
     tax_chart = load_file()
     province_code = tax_chart.loc[tax_chart['region'] == province]
-    if yearly_income > 200000 and donation_amount > 200:
-        federal_credit = (200 * tax_chart['rate_1_2017'].values[0] +
-                          min(yearly_income - 200000, donation_amount - 200) *
-                          0.33 + ((donation_amount-200) -
-                                  min(yearly_income - 200000, donation_amount
-                                  - 200)) * tax_chart['rate_2_2017'].values[0])
-        provincial_credit = (200 * province_code['rate_1_2017'].values[0] +
-                             (donation_amount - 200) *
+    if (yearly_income > constants.HighIncomeLimit and
+       donation_amount > constants.FirstDonationLimit):
+        federal_credit = (constants.FirstDonationLimit *
+                          tax_chart['rate_1_2017'].values[0] +
+                          min(yearly_income - constants.HighIncomeLimit,
+                              donation_amount - constants.FirstDonationLimit) *
+                          constants.HighIncomeTaxCredit +
+                          ((donation_amount-constants.FirstDonationLimit) -
+                           min(yearly_income - constants.HighIncomeLimit,
+                               donation_amount - constants.FirstDonationLimit))
+                          * tax_chart['rate_2_2017'].values[0])
+        provincial_credit = (constants.FirstDonationLimit *
+                             province_code['rate_1_2017'].values[0] +
+                             (donation_amount - constants.FirstDonationLimit) *
                              province_code['rate_2_2017'].values[0])
-    elif yearly_income <= 200000 and donation_amount > 200:
-        federal_credit = (200 * tax_chart['rate_1_2017'].values[0] +
-                          (donation_amount - 200) *
+    elif (yearly_income <= constants.HighIncomeLimit and
+          donation_amount > constants.FirstDonationLimit):
+        federal_credit = (constants.FirstDonationLimit *
+                          tax_chart['rate_1_2017'].values[0] +
+                          (donation_amount - constants.FirstDonationLimit) *
                           tax_chart['rate_2_2017'].values[0])
-        provincial_credit = (200 * province_code['rate_1_2017'].values[0] +
-                             (donation_amount - 200) *
+        provincial_credit = (constants.FirstDonationLimit *
+                             province_code['rate_1_2017'].values[0] +
+                             (donation_amount - constants.FirstDonationLimit) *
                              province_code['rate_2_2017'].values[0])
     else:
         federal_credit = donation_amount * tax_chart['rate_1_2017'].values[0]
         provincial_credit = (donation_amount *
                              province_code['rate_1_2017'].values[0])
     return federal_credit, provincial_credit
-
-
-def tax_calculator(yearly_income, province):
-    tax_chart = load_file()
 
 
 def plot_analytics(yearly_income, province):
