@@ -37,7 +37,7 @@ body {
     position: absolute;
     width: 100%;
     top: 0;
-    animation: fade-in 150ms;
+    animation: fade-in 500ms;
 }
 
 @keyframes fade-in {
@@ -88,9 +88,14 @@ body {
     border-radius: 32px;
     padding: 12px 24px;
     font-weight: bold;
-    cursor: pointer;
     position: relative;
     display: block;
+    cursor: pointer;
+}
+
+.btn:disabled {
+    cursor: none;
+    opacity: 0.7;
 }
 
 .btn--large {
@@ -98,7 +103,7 @@ body {
 }
 
 .step-container {
-    max-width: 800px;
+    max-width: 864px;
     padding: 0 16px;
     margin: auto;
 }
@@ -110,6 +115,7 @@ body {
 .step-container h1 {
     font-size: 58px;
     line-height: 1;
+    margin-bottom: 128px;
 }
 
 .question-header {
@@ -131,11 +137,19 @@ body {
     line-height: 1;
 }
 
-input {
-    margin-bottom: 64px;
+.donation-input-container {
+    position: relative;
+}
+
+.donation-input-container span {
+    position: absolute;
+    left: -24px;
+    font-size: 24px;
+    top: 8px;
 }
 
 input[type='text'],
+select,
 input[type='number'] {
     width: 100%;
     border: none;
@@ -145,9 +159,11 @@ input[type='number'] {
     padding: 8px 0;
     transition: 150ms;
     color: var(--black);
+    margin-bottom: 64px;
 }
 
 input[type='text']:focus,
+select:focus,
 input[type='number']:focus {
     outline: none;
     border-width: 2px;

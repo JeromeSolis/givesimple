@@ -16,6 +16,30 @@ interface Step {
     }>
 }
 
+const provinces = [
+    'alberta',
+    'british columbia',
+    'manitoba',
+    'new brunswick',
+    'newfoundland',
+    'labrador',
+    'nova scotia',
+    'ontario',
+    'prince edward island',
+    'quebec',
+    'saskatchewan',
+]
+
+const capitalizeWord = (str: string): string => {
+    return str[0].toUpperCase() + str.slice(1)
+}
+
+const toSentenceCase = (str: string): string =>
+    str
+        .split(' ')
+        .map(capitalizeWord)
+        .join(' ')
+
 const steps: Step[] = [
     {
         component: ({ form, setField, setNextStep }) => (
@@ -26,16 +50,20 @@ const steps: Step[] = [
                         How much would you like to donate to charities per year?
                     </label>
                 </header>
-                <input
-                    id='donationTotal'
-                    placeholder='Type your answer here...'
-                    type='number'
-                    value={form.donationTotal}
-                    onInput={e => {
-                        let value: string = (e.target as HTMLInputElement).value
-                        setField('donationTotal')(value)
-                    }}
-                />
+                <div className='donation-input-container'>
+                    <span>$</span>
+                    <input
+                        id='donationTotal'
+                        placeholder='Type your answer here'
+                        type='number'
+                        value={form.donationTotal}
+                        onInput={e => {
+                            let value: string = (e.target as HTMLInputElement)
+                                .value
+                            setField('donationTotal')(value)
+                        }}
+                    />
+                </div>
                 {!!form.donationTotal.length && (
                     <button
                         className='btn center'
@@ -46,6 +74,49 @@ const steps: Step[] = [
                 )}
             </div>
         ),
+    },
+    {
+        component: ({ form, setField, setNextStep, setPreviousStep }) => {
+            return (
+                <div className='step-container'>
+                    <header className='question-header'>
+                        <span>2</span>
+                        <label htmlFor='province'>
+                            Which province/territory do you reside in?
+                        </label>
+                    </header>
+                    <select
+                        id='province'
+                        placeholder='Type or select an option'
+                        autocomplete='off'
+                        type='text'
+                        value={form.province}
+                        onChange={e => {
+                            let value: string = (e.target as HTMLInputElement)
+                                .value
+                            setField('province')(value)
+                        }}
+                    >
+                        <option disabled selected>
+                            Select an option
+                        </option>
+                        {provinces.map(province => (
+                            <option value={province}>
+                                {toSentenceCase(province)}
+                            </option>
+                        ))}
+                    </select>
+                    {form.province && (
+                        <button
+                            className='btn center'
+                            onClick={() => setNextStep()}
+                        >
+                            Next
+                        </button>
+                    )}
+                </div>
+            )
+        },
     },
     {
         component: () => <div>Results</div>,
