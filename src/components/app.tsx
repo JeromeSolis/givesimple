@@ -9,6 +9,8 @@ if ((module as any).hot) {
 
 interface Step {
     component: FunctionalComponent<{
+        form: Form
+        setField: (x: keyof Form) => (value: string | boolean) => void
         setNextStep: () => void
         setPreviousStep: () => void
     }>
@@ -16,18 +18,32 @@ interface Step {
 
 const steps: Step[] = [
     {
-        component: ({ setNextStep }) => (
+        component: ({ form, setField, setNextStep }) => (
             <div className='step-container'>
                 <header className='question-header'>
                     <span>1</span>
-                    <h2>
+                    <label htmlFor='donationTotal'>
                         How much would you like to donate to charities per year?
-                    </h2>
+                    </label>
                 </header>
-                <input />
-                <button className='btn' onClick={() => setNextStep()}>
-                    Next
-                </button>
+                <input
+                    id='donationTotal'
+                    placeholder='Type your answer here...'
+                    type='number'
+                    value={form.donationTotal}
+                    onInput={e => {
+                        let value: string = (e.target as HTMLInputElement).value
+                        setField('donationTotal')(value)
+                    }}
+                />
+                {!!form.donationTotal.length && (
+                    <button
+                        className='btn center'
+                        onClick={() => setNextStep()}
+                    >
+                        Next
+                    </button>
+                )}
             </div>
         ),
     },
@@ -37,38 +53,59 @@ const steps: Step[] = [
 ]
 
 const ProgressBar: FunctionalComponent<{
-    activeStep: number | undefined
+    activeStep: number
     steps: Step[]
-}> = ({ activeStep, steps }) =>
-    typeof activeStep === 'number' ? (
-        <div className='progress-bar'>
-            <div
-                className='progress-bar__fill'
-                style={{ width: `${(activeStep / (steps.length - 1)) * 100}%` }}
-            />
-            <span className='progress-bar__step-notice'>
-                {activeStep} of {steps.length - 1} answered
-                {/* derive this from # of fields filled instead, for back navigation */}
-            </span>
-        </div>
-    ) : null
+}> = ({ activeStep, steps }) => (
+    <div className='progress-bar'>
+        <div
+            className='progress-bar__fill'
+            style={{ width: `${(activeStep / (steps.length - 1)) * 100}%` }}
+        />
+        <span className='progress-bar__step-notice'>
+            {activeStep} of {steps.length - 1} answered
+            {/* derive this from # of fields filled instead, for back navigation */}
+        </span>
+    </div>
+)
 
 const StartScreen: FunctionalComponent<{ start: () => void }> = ({ start }) => (
-    <div className='step-container'>
+    <div className='step-container step-container--centered'>
         <h1>Invest in changing the world</h1>
-        <button className='btn btn--large' onClick={start}>
+        <button className='btn btn--large center' onClick={start}>
             Start doing good
         </button>
     </div>
 )
 
+interface Form {
+    donationTotal: string
+    province: string
+    incomeValue: string
+    incomePeriod: string
+    retired: boolean | undefined
+}
+
+const initialForm: Form = {
+    donationTotal: '',
+    province: '',
+    incomeValue: '',
+    incomePeriod: '',
+    retired: undefined,
+}
+
 const FormStepper: FunctionalComponent = () => {
     const [activeStep, setActiveStep] = useState(0)
+    const [form, setForm] = useState<Form>(initialForm)
+    const setField = (field: keyof Form) => (value: string | boolean) => {
+        setForm({ ...form, [field]: value })
+    }
     const Step = steps[activeStep].component
     return (
         <Fragment>
             <ProgressBar activeStep={activeStep} steps={steps} />
             <Step
+                form={form}
+                setField={setField}
                 setNextStep={() => setActiveStep(activeStep + 1)}
                 setPreviousStep={() => setActiveStep(activeStep - 1)}
             />
