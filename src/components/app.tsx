@@ -1,5 +1,6 @@
 import { Fragment, FunctionalComponent, h } from 'preact'
 import { useState } from 'preact/hooks'
+import Arrow from './Arrow'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 if ((module as any).hot) {
@@ -79,6 +80,12 @@ const steps: Step[] = [
         component: ({ form, setField, setNextStep, setPreviousStep }) => {
             return (
                 <div className='step-container'>
+                    <button
+                        className='back-button'
+                        onClick={() => setPreviousStep()}
+                    >
+                        <Arrow />
+                    </button>
                     <header className='question-header'>
                         <span>2</span>
                         <label htmlFor='province'>
