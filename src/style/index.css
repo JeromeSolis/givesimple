@@ -141,11 +141,21 @@ body {
     position: relative;
 }
 
-.donation-input-container span {
+.currency-symbol {
     position: absolute;
     left: -24px;
     font-size: 24px;
     top: 8px;
+}
+
+.validation-message {
+    bottom: 24px;
+    top: unset;
+    font-size: 16px;
+    color: #5d5d5d;
+    left: 0;
+    animation: fade-in 300ms;
+    position: absolute;
 }
 
 input[type='text'],

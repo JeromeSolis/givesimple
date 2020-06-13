@@ -1,6 +1,7 @@
 import { Fragment, FunctionalComponent, h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useState, useEffect } from 'preact/hooks'
 import Arrow from './Arrow'
+import debounce from 'lodash.debounce'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 if ((module as any).hot) {
@@ -43,38 +44,66 @@ const toSentenceCase = (str: string): string =>
 
 const steps: Step[] = [
     {
-        component: ({ form, setField, setNextStep }) => (
-            <div className='step-container'>
-                <header className='question-header'>
-                    <span>1</span>
-                    <label htmlFor='donationTotal'>
-                        How much would you like to donate to charities per year?
-                    </label>
-                </header>
-                <div className='donation-input-container'>
-                    <span>$</span>
-                    <input
-                        id='donationTotal'
-                        placeholder='Type your answer here'
-                        type='number'
-                        value={form.donationTotal}
-                        onInput={e => {
-                            let value: string = (e.target as HTMLInputElement)
-                                .value
-                            setField('donationTotal')(value)
-                        }}
-                    />
+        component: ({ form, setField, setNextStep }) => {
+            const [message, setMessage] = useState('')
+            const [timeoutId, setTimeoutId] = useState<number | undefined>(
+                undefined,
+            )
+            return (
+                <div className='step-container'>
+                    <header className='question-header'>
+                        <span>1</span>
+                        <label htmlFor='donationTotal'>
+                            How much would you like to donate to charities per
+                            year?
+                        </label>
+                    </header>
+                    <div className='donation-input-container'>
+                        <span className='currency-symbol'>$</span>
+                        <input
+                            id='donationTotal'
+                            placeholder='Type your answer here'
+                            type='number'
+                            value={form.donationTotal}
+                            onInput={e => {
+                                let value: string = (e.target as HTMLInputElement)
+                                    .value
+                                setField('donationTotal')(value)
+                                window.clearTimeout(timeoutId)
+                                if (value) {
+                                    setTimeoutId(
+                                        window.setTimeout(() => {
+                                            setMessage(
+                                                `That's $${(
+                                                    Number(value) / 12
+                                                ).toFixed(
+                                                    2,
+                                                )} per month. Great job.`,
+                                            )
+                                        }, 1000),
+                                    )
+                                } else {
+                                    setMessage('')
+                                }
+                            }}
+                        />
+                        {message && (
+                            <span className='validation-message'>
+                                {message}
+                            </span>
+                        )}
+                    </div>
+                    {!!form.donationTotal.length && (
+                        <button
+                            className='btn center'
+                            onClick={() => setNextStep()}
+                        >
+                            Next
+                        </button>
+                    )}
                 </div>
-                {!!form.donationTotal.length && (
-                    <button
-                        className='btn center'
-                        onClick={() => setNextStep()}
-                    >
-                        Next
-                    </button>
-                )}
-            </div>
-        ),
+            )
+        },
     },
     {
         component: ({ form, setField, setNextStep, setPreviousStep }) => {
