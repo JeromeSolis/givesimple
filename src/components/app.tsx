@@ -23,13 +23,15 @@ const provinces = [
     'british columbia',
     'manitoba',
     'new brunswick',
-    'newfoundland',
-    'labrador',
+    'newfoundland and labrador',
+    'northwest territories',
     'nova scotia',
+    'nunavut',
     'ontario',
     'prince edward island',
     'quebec',
     'saskatchewan',
+    'yukon'
 ]
 
 const capitalizeWord = (str: string): string => {
@@ -225,7 +227,7 @@ const App: FunctionalComponent = () => {
     return (
         <div id='app'>
             <header className='app-header'>
-                <h1>Give Simple</h1>
+                <h1>Givesimple</h1>
             </header>
             {hasStarted ? (
                 <FormStepper />
