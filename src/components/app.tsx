@@ -1,7 +1,6 @@
 import { Fragment, FunctionalComponent, h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import Arrow from './Arrow'
-import debounce from 'lodash.debounce'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 if ((module as any).hot) {
@@ -15,6 +14,7 @@ interface Step {
         setField: (x: keyof Form) => (value: string | boolean) => void
         setNextStep: () => void
         setPreviousStep: () => void
+        questionNumber: number
     }>
 }
 
@@ -44,7 +44,7 @@ const toSentenceCase = (str: string): string =>
 
 const steps: Step[] = [
     {
-        component: ({ form, setField, setNextStep }) => {
+        component: ({ questionNumber, form, setField, setNextStep }) => {
             const [message, setMessage] = useState('')
             const [timeoutId, setTimeoutId] = useState<number | undefined>(
                 undefined,
@@ -52,7 +52,7 @@ const steps: Step[] = [
             return (
                 <div className='step-container'>
                     <header className='question-header'>
-                        <span>1</span>
+                        <span>{questionNumber}</span>
                         <label htmlFor='donationTotal'>
                             How much would you like to donate to charities per
                             year?
@@ -106,7 +106,13 @@ const steps: Step[] = [
         },
     },
     {
-        component: ({ form, setField, setNextStep, setPreviousStep }) => {
+        component: ({
+            questionNumber,
+            form,
+            setField,
+            setNextStep,
+            setPreviousStep,
+        }) => {
             return (
                 <div className='step-container'>
                     <button
@@ -116,7 +122,7 @@ const steps: Step[] = [
                         <Arrow />
                     </button>
                     <header className='question-header'>
-                        <span>2</span>
+                        <span>{questionNumber}</span>
                         <label htmlFor='province'>
                             Which province/territory do you reside in?
                         </label>
@@ -155,7 +161,68 @@ const steps: Step[] = [
         },
     },
     {
-        component: () => <div>Results</div>,
+        component: ({
+            questionNumber,
+            form,
+            setField,
+            setNextStep,
+            setPreviousStep,
+        }) => (
+            <div className='step-container'>
+                <button
+                    className='back-button'
+                    onClick={() => setPreviousStep()}
+                >
+                    <Arrow />
+                </button>
+                <header className='question-header'>
+                    <span>{questionNumber}</span>
+                    <h2>Do you earn more than $200,000 per year?</h2>
+                </header>
+                <div className='radio-container'>
+                    <input
+                        type='radio'
+                        id='yes'
+                        name='income'
+                        value='yes'
+                        checked={form.incomeThreshold === true}
+                        onClick={() => setField('incomeThreshold')(true)}
+                    />
+                    <label for='yes'>Yes</label>
+                </div>
+                <div className='radio-container'>
+                    <input
+                        type='radio'
+                        id='no'
+                        name='income'
+                        value='no'
+                        checked={form.incomeThreshold === false}
+                        onClick={() => setField('incomeThreshold')(false)}
+                    />
+                    <label for='no'>No</label>
+                </div>
+                {typeof form.incomeThreshold === 'boolean' && (
+                    <button
+                        className='btn center'
+                        onClick={() => setNextStep()}
+                    >
+                        Next
+                    </button>
+                )}
+            </div>
+        ),
+    },
+    {
+        component: ({ form }) => (
+            <div className='step-container'>
+                Results
+                {Object.keys(form).map((key: any) => (
+                    <p>
+                        {key}: {form[key as keyof Form]}
+                    </p>
+                ))}
+            </div>
+        ),
     },
 ]
 
@@ -187,17 +254,15 @@ const StartScreen: FunctionalComponent<{ start: () => void }> = ({ start }) => (
 interface Form {
     donationTotal: string
     province: string
-    incomeValue: string
-    incomePeriod: string
-    retired: boolean | undefined
+    incomeThreshold: boolean | undefined
+    // retired: boolean | undefined
 }
 
 const initialForm: Form = {
     donationTotal: '',
     province: '',
-    incomeValue: '',
-    incomePeriod: '',
-    retired: undefined,
+    incomeThreshold: undefined,
+    // retired: undefined,
 }
 
 const FormStepper: FunctionalComponent = () => {
@@ -211,6 +276,7 @@ const FormStepper: FunctionalComponent = () => {
         <Fragment>
             <ProgressBar activeStep={activeStep} steps={steps} />
             <Step
+                questionNumber={activeStep + 1}
                 form={form}
                 setField={setField}
                 setNextStep={() => setActiveStep(activeStep + 1)}

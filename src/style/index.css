@@ -130,7 +130,8 @@ body {
     bottom: 2px;
 }
 
-.question-header label {
+.question-header label,
+.question-header h2 {
     margin: 0;
     font-weight: bold;
     font-size: 24px;
@@ -193,6 +194,53 @@ input::-webkit-inner-spin-button {
 
 input[type='number'] {
     -moz-appearance: textfield;
+}
+
+.radio-container {
+    width: 100%;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+input[type='radio'] {
+    opacity: 0;
+}
+
+input[type='radio'] + label::before {
+    content: '';
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    box-sizing: border-box;
+}
+
+input[type='radio']:not(:checked) + label::before {
+    border-color: #525252;
+}
+
+input[type='radio']:checked + label::after {
+    content: '';
+    position: absolute;
+    display: inline-block;
+    left: 5px;
+    top: 5px;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: #000;
+}
+
+input[type='radio'] + label {
+    font-size: 16px;
+    padding-left: 16px;
+}
+
+input[type='radio']:not(:checked) + label {
+    color: #525252;
 }
 
 .back-button {
