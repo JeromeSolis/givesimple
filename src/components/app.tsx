@@ -267,14 +267,12 @@ interface Form {
     donationTotal: string
     province: string
     bracket: string
-    // retired: boolean | undefined
 }
 
 const initialForm: Form = {
     donationTotal: '',
     province: '',
     bracket: '',
-    // retired: undefined,
 }
 
 const FormStepper: FunctionalComponent = () => {
