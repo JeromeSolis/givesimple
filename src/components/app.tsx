@@ -34,6 +34,13 @@ const provinces = [
     'yukon'
 ]
 
+const incomeBrackets = [
+    'Less than 50,000',
+    'Between 50,000 and 100,000',
+    'Between 100,001 and 200,000',
+    'More than 200,000'
+]
+
 const capitalizeWord = (str: string): string => {
     return str[0].toUpperCase() + str.slice(1)
 }
@@ -169,50 +176,53 @@ const steps: Step[] = [
             setField,
             setNextStep,
             setPreviousStep,
-        }) => (
-            <div className='step-container'>
-                <button
-                    className='back-button'
-                    onClick={() => setPreviousStep()}
-                >
-                    <Arrow />
-                </button>
-                <header className='question-header'>
-                    <span>{questionNumber}</span>
-                    <h2>Do you earn more than $200,000 per year?</h2>
-                </header>
-                <div className='radio-container'>
-                    <input
-                        type='radio'
-                        id='yes'
-                        name='income'
-                        value='yes'
-                        checked={form.incomeThreshold === true}
-                        onClick={() => setField('incomeThreshold')(true)}
-                    />
-                    <label for='yes'>Yes</label>
-                </div>
-                <div className='radio-container'>
-                    <input
-                        type='radio'
-                        id='no'
-                        name='income'
-                        value='no'
-                        checked={form.incomeThreshold === false}
-                        onClick={() => setField('incomeThreshold')(false)}
-                    />
-                    <label for='no'>No</label>
-                </div>
-                {typeof form.incomeThreshold === 'boolean' && (
+        }) => {
+            return (
+                <div className='step-container'>
                     <button
-                        className='btn center'
-                        onClick={() => setNextStep()}
+                        className='back-button'
+                        onClick={() => setPreviousStep()}
                     >
-                        Next
+                        <Arrow />
                     </button>
-                )}
-            </div>
-        ),
+                    <header className='question-header'>
+                        <span>{questionNumber}</span>
+                        <label htmlFor='province'>
+                            How much do you earn per year?
+                        </label>
+                    </header>
+                    <select
+                        id='incomeBrackets'
+                        placeholder='Select an option'
+                        autocomplete='off'
+                        type='text'
+                        value={form.bracket}
+                        onChange={e => {
+                            let value: string = (e.target as HTMLInputElement)
+                                .value
+                            setField('bracket')(value)
+                        }}
+                    >
+                        <option disabled selected>
+                            Select an option
+                        </option>
+                        {incomeBrackets.map(bracket => (
+                          <option value={bracket}>
+                              {bracket}
+                          </option>
+                        ))}
+                    </select>
+                    {form.bracket && (
+                        <button
+                            className='btn center'
+                            onClick={() => setNextStep()}
+                        >
+                            Next
+                        </button>
+                    )}
+                </div>
+            )
+        },
     },
     {
         component: ({ form }) => (
@@ -256,15 +266,13 @@ const StartScreen: FunctionalComponent<{ start: () => void }> = ({ start }) => (
 interface Form {
     donationTotal: string
     province: string
-    incomeThreshold: boolean | undefined
-    // retired: boolean | undefined
+    bracket: string
 }
 
 const initialForm: Form = {
     donationTotal: '',
     province: '',
-    incomeThreshold: undefined,
-    // retired: undefined,
+    bracket: '',
 }
 
 const FormStepper: FunctionalComponent = () => {
